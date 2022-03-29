@@ -1,4 +1,4 @@
-#Canopeo
+#SoilSampler
 
 pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 
@@ -7,14 +7,14 @@ pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 rD = rsDriver(browser="firefox", port=4545L, verbose=F)
 remDr = rD[["client"]]
 
-url = "https://play.google.com/store/apps/details?id=okstate.edu.canopeo&gl=DE&showAllReviews=true"
+url = "https://play.google.com/store/apps/details?id=com.noframe.farmissoilsamples&gl=DE&showAllReviews=true"
 remDr$navigate(url)
 
 
 webElem = remDr$findElement("css", "body")
 
 #scroll to the End
-for(i in 1:2){
+for(i in 1:20){
   message(paste("Iteration",i))
   webElem$sendKeysToElement(list(key = "end"))
   #Check for the Show More Button
@@ -44,10 +44,10 @@ system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
 #Extracting what I need from Reviews
 
 # 1) Reviewer Name
-names_Canopeo = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
+names_SoilSampler = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
 
 # 2) Number of Stars
-stars_Canopeo = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
+stars_SoilSampler = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
   html_attr("aria-label") %>% 
   #Remove everything that's not numeric
   str_remove_all('\\D+') %>% 
@@ -55,32 +55,32 @@ stars_Canopeo = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>%
   as.integer()
 
 # 3) Date of Review
-dates_Canopeo = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
+dates_SoilSampler = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
   html_text() %>% 
   # Convert to a Date
   mdy()
 
 # 4) Full Text of the Review
-reviews_Canopeo <- html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
+reviews_SoilSampler <- html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
 ###Deal with the "Full Review" Issue where text is duplicated
-reviews_Canopeo = if_else(
+reviews_SoilSampler = if_else(
   #If the review is truncated
-  str_detect(reviews_Canopeo, '\\.\\.\\.Full Review'),
+  str_detect(reviews_SoilSampler, '\\.\\.\\.Full Review'),
   #Grab all the Text After the string '...Full Review'
-  str_sub(reviews_Canopeo, 
-          start = str_locate(reviews_Canopeo, '\\.\\.\\.Full Review')[, 2]+1
+  str_sub(reviews_SoilSampler, 
+          start = str_locate(reviews_SoilSampler, '\\.\\.\\.Full Review')[, 2]+1
   ),
   #Else remove the leading space from the review as is
-  str_trim(reviews_Canopeo))
+  str_trim(reviews_SoilSampler))
 
 
 #Put into table
-Canopeo = tibble(
-  names = names_Canopeo, 
-  stars = stars_Canopeo, 
-  dates = dates_Canopeo, 
-  reviews = reviews_Canopeo) 
-saveRDS(Canopeo, 'Objects/Data_Collection_Management/Canopeo.RDS')
-write_csv(Canopeo, 'data/Data_Collection_Management/Canopeo.csv')
+SoilSampler = tibble(
+  names = names_SoilSampler, 
+  stars = stars_SoilSampler, 
+  dates = dates_SoilSampler, 
+  reviews = reviews_SoilSampler) 
+saveRDS(SoilSampler, 'Objects/Data_Collection_Management/SoilSampler.RDS')
+write_csv(SoilSampler, 'data/Data_Collection_Management/SoilSampler.csv')
 
 
