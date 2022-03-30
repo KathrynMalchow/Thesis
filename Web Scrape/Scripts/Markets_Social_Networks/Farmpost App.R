@@ -1,4 +1,4 @@
-#Cattle Market Mobile
+#Farmpost App
 
 pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 
@@ -7,7 +7,7 @@ pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 rD = rsDriver(browser="firefox", port=4545L, verbose=F)
 remDr = rD[["client"]]
 
-url = "https://play.google.com/store/apps/details?id=com.graingersoftwaresolutions.cattlemarketmobile&hl=en&showAllReviews=true"
+url = "https://play.google.com/store/apps/details?id=com.farmhand&showAllReviews=true"
 remDr$navigate(url)
 
 
@@ -44,10 +44,10 @@ system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
 #Extracting what I need from Reviews
 
 # 1) Reviewer Name
-names_Cattle_Market = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
+names_Farmpost = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
 
 # 2) Number of Stars
-stars_Cattle_Market = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
+stars_Farmpost = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
   html_attr("aria-label") %>% 
   #Remove everything that's not numeric
   str_remove_all('\\D+') %>% 
@@ -55,30 +55,30 @@ stars_Cattle_Market = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")
   as.integer()
 
 # 3) Date of Review
-dates_Cattle_Market = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
+dates_Farmpost = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
   html_text() %>% 
   # Convert to a Date
   mdy()
 
 # 4) Full Text of the Review
-reviews_Cattle_Market = html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
+reviews_Farmpost = html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
 ###Deal with the "Full Review" Issue where text is duplicated
-reviews_Cattle_Market = if_else(
+reviews_Farmpost = if_else(
   #If the review is truncated
-  str_detect(reviews_Cattle_Market, '\\.\\.\\.Full Review'),
+  str_detect(reviews_Farmpost, '\\.\\.\\.Full Review'),
   #Grab all the Text After the string '...Full Review'
-  str_sub(reviews_Cattle_Market, 
-          start = str_locate(reviews_Cattle_Market, '\\.\\.\\.Full Review')[, 2]+1
+  str_sub(reviews_Farmpost, 
+          start = str_locate(reviews_Farmpost, '\\.\\.\\.Full Review')[, 2]+1
   ),
   #Else remove the leading space from the review as is
-  str_trim(reviews_Cattle_Market))
+  str_trim(reviews_Farmpost))
 
 
 #Put into table
-Cattle_Market = tibble(
-  names = names_Cattle_Market, 
-  stars = stars_Cattle_Market, 
-  dates = dates_Cattle_Market, 
-  reviews = reviews_Cattle_Market) 
-saveRDS(Cattle_Market, 'Objects/Markets_Social_Networks/Cattle_Market.RDS')
-write_csv(Cattle_Market, 'data/Markets_Social_Networks/Cattle_Market.csv')
+Farmpost = tibble(
+  names = names_Farmpost, 
+  stars = stars_Farmpost, 
+  dates = dates_Farmpost, 
+  reviews = reviews_Farmpost) 
+saveRDS(Farmpost, 'Objects/Markets_Social_Networks/Farmpost.RDS')
+write_csv(Farmpost, 'data/Markets_Social_Networks/Farmpost.csv')
