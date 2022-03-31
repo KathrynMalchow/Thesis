@@ -1,4 +1,4 @@
-#BigHaat Smart Farming App
+#Plantix - your crop doctor
 
 pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 
@@ -7,7 +7,7 @@ pacman::p_load(RSelenium, tidyverse, lubridate, rvest, xml2)
 rD = rsDriver(browser="firefox", port=4545L, verbose=F)
 remDr = rD[["client"]]
 
-url = "https://play.google.com/store/apps/details?id=com.BigHaat&showAllReviews=true"
+url = "https://play.google.com/store/apps/details?id=com.peat.GartenBank&showAllReviews=true"
 remDr$navigate(url)
 
 
@@ -44,10 +44,10 @@ system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
 #Extracting what I need from Reviews
 
 # 1) Reviewer Name
-names_BigHaat = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
+names_Plantix = html_obj %>% html_elements(".kx8XBd .X43Kjb") %>% html_text()
 
 # 2) Number of Stars
-stars_BigHaat = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
+stars_Plantix = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>% 
   html_attr("aria-label") %>% 
   #Remove everything that's not numeric
   str_remove_all('\\D+') %>% 
@@ -55,30 +55,30 @@ stars_BigHaat = html_obj %>% html_elements(".kx8XBd .nt2C1d [role='img']")%>%
   as.integer()
 
 # 3) Date of Review
-dates_BigHaat = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
+dates_Plantix = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>% 
   html_text() %>% 
   # Convert to a Date
   mdy()
 
 # 4) Full Text of the Review
-reviews_BigHaat = html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
+reviews_Plantix = html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
 ###Deal with the "Full Review" Issue where text is duplicated
-reviews_BigHaat = if_else(
+reviews_Plantix = if_else(
   #If the review is truncated
-  str_detect(reviews_BigHaat, '\\.\\.\\.Full Review'),
+  str_detect(reviews_Plantix, '\\.\\.\\.Full Review'),
   #Grab all the Text After the string '...Full Review'
-  str_sub(reviews_BigHaat, 
-          start = str_locate(reviews_BigHaat, '\\.\\.\\.Full Review')[, 2]+1
+  str_sub(reviews_Plantix, 
+          start = str_locate(reviews_Plantix, '\\.\\.\\.Full Review')[, 2]+1
   ),
   #Else remove the leading space from the review as is
-  str_trim(reviews_BigHaat))
+  str_trim(reviews_Plantix))
 
 
 #Put into table
-BigHaat = tibble(
-  names = names_BigHaat, 
-  stars = stars_BigHaat, 
-  dates = dates_BigHaat, 
-  reviews = reviews_BigHaat) 
-saveRDS(BigHaat, 'Objects/Markets_Social_Networks/BigHaat.RDS')
-write_csv(BigHaat, 'data/Markets_Social_Networks/BigHaat.csv')
+Plantix = tibble(
+  names = names_Plantix, 
+  stars = stars_Plantix, 
+  dates = dates_Plantix, 
+  reviews = reviews_Plantix) 
+saveRDS(Plantix, 'Objects/Advanced_Tech/Plantix.RDS')
+write_csv(Plantix, 'data/Advanced_Tech/Plantix.csv')
