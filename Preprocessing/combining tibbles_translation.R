@@ -14,6 +14,10 @@ tib_marketNetworks = reduce(list_marketNetworks, bind_rows)
 list_AdvTech = list(AgriBus, Agrio, BigHaat, Field_Navigator, FieldBee, OneSoil, Plantix, SCOUTING, xarvio)
 tib_AdvTech = reduce(list_AdvTech, bind_rows)
 
+saveRDS(tib_AdvTech, 'Objects/Advanced_Tech/tib_AdvTech.RDS')
+write_csv(tib_AdvTech, 'data/Advanced_Tech/tib_AdvTech.csv')
+
+
 ###Translating
 
 #Identifying rows with languages other than English
@@ -58,11 +62,9 @@ install_github("ChristopherLucas/translateR")
 library(translateR)
 
 
-test = translate(dataset = tib_AdvTech,
-          content.field = "Reviews",
-          microsoft.client.id = "1202a93a-a5a1-48f6-a219-b1a40e9e80d4",
-          microsoft.client.secret = "044290fb8ff54bb1ba8827d71f082041",
-          source.lang = "hi",
+test = translate(content.vec = tib_AdvTech$reviews[c(80,  326, 327, 329, 364, 367, 372, 377, 421, 423, 436, 439, 440, 704, 705, 706)],
+          microsoft.api.key = "044290fb8ff54bb1ba8827d71f082041",
+          source.lang = c("de" ,"hr"),
           target.lang = "en")
 
 
