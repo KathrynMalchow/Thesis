@@ -21,30 +21,10 @@ corp_DM = corpus(tib_DataManagement$reviews,
 #set up spacyr
 library(reticulate)
 
-spacy_uninstall()
+
 spacy_install()
 
 spacy_initialize()
-
-spacy_install(
-  conda = "auto",
-  version = "latest",
-  lang_models = "en_core_web_sm",
-  python_version = "3.6",
-  envname = "spacy_condaenv",
-  pip = TRUE,
-  python_path = NULL,
-  prompt = TRUE
-)
-
-
-spacy_install_virtualenv(
-  version = "latest",
-  lang_models = "en_core_web_sm",
-  python_version = "3.6",
-  python_path = NULL,
-  prompt = TRUE
-)
 
 
 
