@@ -60,7 +60,7 @@ dates_AgriBus = html_obj %>% html_elements(".kx8XBd .p2TkOb") %>%
   # Convert to a Date
   mdy()
 
-# 4) Full Text of the Review
+# 4) Full Text of the Review  but not reply
 reviews_AgriBus = html_obj %>% html_elements(".UD7Dzf") %>% html_text() 
 ###Deal with the "Full Review" Issue where text is duplicated
 reviews_AgriBus = if_else(

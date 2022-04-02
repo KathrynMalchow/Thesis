@@ -1,6 +1,6 @@
 #text preprocessing for feature extraction - Data and Management
 
-pacman::p_load(quanteda, spacyr, remotes)
+pacman::p_load(quanteda, spacyr, reticulate)
 
 #Parsing the text (POS) and extracting noun, verbs, and adjectives
 
@@ -19,8 +19,42 @@ corp_DM = corpus(tib_DataManagement$reviews,
                  docid_field = "",
                  text_field = "reviews")
 #set up spacyr
+library(reticulate)
+
+spacy_uninstall()
 spacy_install()
+
 spacy_initialize()
+
+spacy_install(
+  conda = "auto",
+  version = "latest",
+  lang_models = "en_core_web_sm",
+  python_version = "3.6",
+  envname = "spacy_condaenv",
+  pip = TRUE,
+  python_path = NULL,
+  prompt = TRUE
+)
+
+
+spacy_install_virtualenv(
+  version = "latest",
+  lang_models = "en_core_web_sm",
+  python_version = "3.6",
+  python_path = NULL,
+  prompt = TRUE
+)
+
+
+
+
+library(reticulate)
+use_python("/Python39/Scripts")
+
+py_run_string("import spacy")
+py_run_string("nlp = spacy.load('/otherdrive/model/en_core_web_lg-2.0.0/en_core_web_lg/en_core_web_lg-2.0.0')")
+
 
 #parse text
 spacy_parse(
