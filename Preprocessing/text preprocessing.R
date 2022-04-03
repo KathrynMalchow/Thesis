@@ -38,7 +38,7 @@ parse_fun = function(df){
 
 
 #use function
-dm_dfm = parse_fun(tib_DataManagement)
+dm_parsed = parse_fun(tib_DataManagement)
   
 
 spacy_finalize()

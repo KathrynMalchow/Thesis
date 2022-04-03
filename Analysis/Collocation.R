@@ -4,9 +4,6 @@ pacman::p_load(udpipe, quanteda)
 
 
 #for DM
-collocation(dm_dfm, term = "lemma", group = c("doc_id", "sentence_id"), 
+collocation(dm_parsed, term = "lemma", group = c("doc_id", "sentence_id"), 
             ngram_max = 2, n_min = 3, sep = " ")
 
-
-collocation(test, term = "features", group = c("docname_", "docid_"),
-            ngram_max = 2, n_min = 3, sep = " ")
