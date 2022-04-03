@@ -2,11 +2,7 @@
 
 pacman::p_load(quanteda, spacyr, reticulate)
 
-#make DM tibble into corpus
 
-corp_DM = corpus(tib_DataManagement$reviews, 
-                 docid_field = "",
-                 text_field = "reviews")
 #set up spacyr
 
 #spacy_install()
@@ -14,26 +10,47 @@ corp_DM = corpus(tib_DataManagement$reviews,
 spacy_initialize()
 
 
-#parse text
-DM_parsed = spacy_parse(
-  corp_DM,
-  pos = TRUE,
-  tag = FALSE,
-  lemma = TRUE,
-  entity = FALSE,
-  dependency = FALSE,
-  nounphrase = FALSE,
-  multithread = FALSE,
-  additional_attributes = NULL) 
+#parse text and preprocess function
 
-DM_parsed[DM_parsed$pos %in% c("NOUN", "VERB", "ADJ"), ]
+parse_fun = function(df){
+  corp = corpus(df$reviews, 
+                docid_field = "",
+                text_field = "reviews")
+  
+  parsed = spacy_parse(
+    corp,
+    pos = TRUE,
+    tag = FALSE,
+    lemma = TRUE,
+    entity = FALSE,
+    dependency = FALSE,
+    nounphrase = FALSE,
+    multithread = FALSE,
+    additional_attributes = NULL)
+  
+  parsed[parsed$pos %in% c("NOUN", "VERB", "ADJ"), ] %>% 
+    as.tokens(., use_lemma = T) %>% 
+    tokens_remove(stopwords()) %>% 
+    dfm
+}
 
-dm_token_test = DM_parsed[DM_parsed$pos %in% c("NOUN", "VERB", "ADJ"), ] %>% 
-  as.tokens(., use_lemma = T) %>% 
-  tokens_remove(stopwords()) %>% 
-  dfm
+
+#use function
+dm_dfm = parse_fun(tib_DataManagement)
+
   
 
 spacy_finalize()
+
+
+
+
+
+
+
+
+
+
+
 
 
