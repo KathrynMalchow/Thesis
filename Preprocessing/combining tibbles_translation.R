@@ -70,7 +70,7 @@ write_csv(tib_DataManagement, 'data/Data_Collection_Management/tib_DataManagemen
 
 
 #with TranslateR
-install_github("ChristopherLucas/translateR")
+#install_github("ChristopherLucas/translateR")
 library(translateR)
 
 #AdvTech Reviews to translate [c(80,  326, 327, 329, 364, 367, 372, 377, 421, 423, 436, 439, 440, 704, 705, 706)]
@@ -100,7 +100,7 @@ api_fun = function(transdf_source_lang, source_lang){
 test_loop = for (i in test_f1$source_lang) {
   test_f1$source_lang != "en" & !is.na(test_f1$source_lang) = 
     data.frame(translate(dataset = test_f1, content.field = reviews, microsoft.api.key = "044290fb8ff54bb1ba8827d71f082041",
-                         source.lang = test_f1$source_lang,
+                         source.lang = test_f1$source_lang, #change
                          target.lang = "en"))
 }
 
