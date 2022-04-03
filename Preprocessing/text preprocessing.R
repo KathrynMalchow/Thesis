@@ -1,6 +1,6 @@
 #text preprocessing for feature extraction - Data and Management
 
-pacman::p_load(quanteda, spacyr, reticulate)
+pacman::p_load(quanteda, spacyr, reticulate, tidytext, tidyverse)
 
 
 #set up spacyr
@@ -28,16 +28,17 @@ parse_fun = function(df){
     multithread = FALSE,
     additional_attributes = NULL)
   
-  parsed[parsed$pos %in% c("NOUN", "VERB", "ADJ"), ] %>% 
-    as.tokens(., use_lemma = T) %>% 
-    tokens_remove(stopwords()) %>% 
-    dfm
+  mystopwords = tibble(word = c("app", "star", "fix" , "please"), lexicon = "me") 
+  allstopwords = stop_words %>%
+    bind_rows(mystopwords)
+  
+  parsed[parsed$pos %in% c("NOUN", "VERB", "ADJ"), ] %>%
+    anti_join(allstopwords, by= c("token" = "word"))
 }
 
 
 #use function
 dm_dfm = parse_fun(tib_DataManagement)
-
   
 
 spacy_finalize()
