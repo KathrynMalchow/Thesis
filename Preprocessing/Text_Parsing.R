@@ -1,4 +1,4 @@
-#text preprocessing for feature extraction - Data and Management
+#text preprocessing for feature extraction
 
 pacman::p_load(quanteda, spacyr, reticulate, tidytext, tidyverse)
 
@@ -37,7 +37,7 @@ parse_fun = function(df){
 }
 
 
-#use function
+#use function - Data Management
 dm_parsed = parse_fun(tib_DataManagement)
   
 
