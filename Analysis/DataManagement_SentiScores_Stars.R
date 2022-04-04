@@ -1,7 +1,7 @@
 
 pacman::p_load(remotes, readr, dplyr, tidyverse, quanteda, spacyr, reticulate, tidytext, stringr)
 
-#df
+#Sentiment Analysis with SentiStrength
 
 #tib_DataManagement
 
