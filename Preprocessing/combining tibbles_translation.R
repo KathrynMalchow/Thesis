@@ -106,6 +106,11 @@ test_loop = for (i in test_f1$source_lang) {
 
 
 
+tran_adv = c(80,  326, 327, 329, 364, 367, 372, 377, 421, 423, 436, 439, 440, 704, 705, 706)
+x = 0
+for (val in tib_test$reviews){
+  if(tib_test$)  
+}
 
 
 
