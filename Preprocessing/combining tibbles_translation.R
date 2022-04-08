@@ -37,7 +37,7 @@ write_csv(tib_AdvTech, 'data/Advanced_Tech/tib_AdvTech.csv')
 
 #Identifying rows with languages other than English (just for checking purposes)
 
-detected_language_DM = tib_DataManagement$reviews %>% 
+detected_language_DM = tib_DataManagement$reviews %>% #done
   sapply(., map_chr, detect_language) %>% 
   data.frame(check.names = FALSE) %>% 
   subset(. != "en")
