@@ -2,14 +2,14 @@ pacman::p_load(quanteda, tidyverse, dplyr, cld2, deeplr, DSSAT, remotes, purrr)
 
 #Combine Tibbles and save
 
-############## Data and Management
+############## Data and Management -done!
 
 list_DataManagement = list(Canopeo, FarmersWallet, farmlogs, FarmManagementPro, FertilizerRemoval, fieldmargin, GPS_FieldsArea_Measure, Grazing_Calculator, LandPKS, MyCropManager, SoilSampler, Tank_Mix_Calculator) 
 tib_DataManagement = reduce(list_DataManagement, bind_rows)
 
 #should actually save after translation, see below
 
-#################### Information and Education
+#################### Information and Education - done!
 
 list_InfoEduc = list(Agri_Farming, AgriApp, AgriMedia_TV, BharatAgri, Extension_Manager, Farming_Solution, IDWeeds, LandPKS, PlantSat, SoilWeb, Yara_CheckIT)
 tib_InfoEduc = reduce(list_InfoEduc, bind_rows)
