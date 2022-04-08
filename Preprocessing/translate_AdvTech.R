@@ -273,4 +273,8 @@ advtech_df$advtech_hr <- NULL
 rownames(advtech_df) <- advtech_df[,1]
 advtech_df[,1] <- NULL
 
+Advanced_Tech_Final = advtech_df
 
+#save!
+saveRDS(Advanced_Tech_Final, 'Analysis/Final_DFs/Advanced_Tech_Final.RDS')
+write_csv(Advanced_Tech_Final, 'Analysis/Final_DFs/Advanced_Tech_Final.csv')
