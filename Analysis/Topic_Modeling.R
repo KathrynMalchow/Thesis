@@ -1,6 +1,6 @@
 #Topic Modeling
 
-pacman::p_load(quanteda, tidytext, tidyverse, dplyr, ggplot2, tidyr, textmineR)
+pacman::p_load(quanteda, tidytext, tidyverse, dplyr, ggplot2, tidyr, textmineR, topicmodels, seededlda)
 
 
 #####tib_DataManagement
@@ -31,18 +31,56 @@ reviews_into_words = function(x){
   
   new$reviews = trimws(new$reviews)
   
-  as.data.frame(new)
+  #as.data.frame(new)
 }
 
 
+################################## easier method
 #run reviews_into_words function for DM
-dm_LDA = reviews_into_words(tib_DataManagement)
+dm_char = reviews_into_words(tib_DataManagement)
+
+
+dm_tokens = tokens(dm_char,
+                      remove_punct = TRUE,
+                      remove_numbers = TRUE) %>%
+  tokens_remove(stopwords()) %>%
+  tokens_tolower() %>% 
+  tokens_select(min_nchar = 1)
+
+#create Document Feature Matrix
+
+dm_dfm = dfm(dm_tokens)
+
+dm_lda = textmodel_lda(dm_dfm, k = 15)
+
+
+terms(dm_lda, 10)
+
+
+# apply to LDA function. set the k = 6, means we want to build 6 topic 
+lda_dm = LDA(dm_dfm, k = 6,control = list(seed = 1502))
+
+# apply auto tidy using tidy and use beta as per-topic-per-word probabilities
+
+lda_dm = tidy(lda_dm ,matrix = "beta")
+
+# choose 15 words with highest beta from each topic
+top_terms_5 <- topic_5 %>%
+  group_by(topic) %>%
+  top_n(15,beta) %>% 
+  ungroup() %>%
+  arrange(topic,-beta)# plot the topic and words for easy interpretation
+plot_topic_5 <- top_terms_5 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  scale_x_reordered()plot_topic_5
 
 
 
-
-
-#create Document Term Matrix
+######create Document Term Matrix (last method)
 dtm = CreateDtm(dm_LDA$reviews, 
                  doc_names = dm_LDA$names, 
                  ngram_window = c(1, 2))  #let algorithm decide unigram or bigram
@@ -56,6 +94,17 @@ rownames(original_tf) =  1:nrow(original_tf)
 vocabulary = tf$term[tf$term_freq > 1 & tf$doc_freq < nrow(dtm) / 2 ]
 
 dtm = dtm
+
+
+
+
+
+
+
+
+
+
+
 
 
 
