@@ -39,7 +39,15 @@ parse_fun = function(df){
 
 #use function - Data Management
 dm_parsed = parse_fun(tib_DataManagement)
-  
+
+#use function - Information/ Education
+ie_parsed = parse_fun(Information_Education_Final)
+
+#use function - Market/ Networks
+mn_parsed = parse_fun(Market_Networks_Final)
+
+#use function - Advanced Technology
+at_parsed = parse_fun(Advanced_Tech_Final)
 
 spacy_finalize()
 
