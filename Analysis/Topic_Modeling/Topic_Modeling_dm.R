@@ -89,6 +89,20 @@ dm_tm_table = formattable(ten_topic_names_df, align = c("l","r"), list(
                                x == "accurate, measure, easy, measuring, features, gps, feature, measurement, ads, distance", style(font.weight = "bold"), NA)
 )))
 
+
+dm_tm_table_nostar = formattable(ten_topic_names_df, align = c("l","r"), list(
+  `Topic` = formatter("span",
+                      style = x ~ ifelse(x == "topic1" | x == "topic5" | x == "topic7" | x == "topic13", style(font.weight = "bold"), NA)),
+  `Terms` = formatter("span",
+                      style = x ~ ifelse(x == "phone, accept, screen, terms, button, android, past, totals, time, acres" 
+                                         | x == "free, data, version, money, month, pay, tracking, worth, found, activities" 
+                                         | x == "easy, farm, keeping, record, makes, farming, easier, tool, recommend, track" | 
+                                           x == "accurate, measure, easy, measuring, features, gps, feature, measurement, ads, distance", style(font.weight = "bold"), NA)
+  )))
+
+
+
+
 #export table function
 export_formattable = function(f, file, width = "100%", height = NULL, 
                                background = "white", delay = 0.2)
@@ -131,11 +145,9 @@ remotes::install_github("hrbrmstr/hrbrthemes")
 library(hrbrthemes)
 
 #color palette
-farm_colors = #a47c48 
-  #99c140 	
-  #ffce36 
-  #ee4035 	
-  #fff2cc
+#farm_colors = c("#a47c48", "#99c140", "#ffce36", "#ee4035", "#fff2cc")
+#green colors = c("#99c140","#4b752a", "#6f8f40", "#375225")
+
 
 #plot
 dm_chart = topics_dm %>%
@@ -152,10 +164,12 @@ dm_chart = topics_dm %>%
        title = "Topic Prevalence",
        subtitle = "With the top words that contribute to each topic") +
   theme_minimal()+
-  scale_fill_brewer(palette = "Dark2")
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  scale_fill_manual(values = c("#99c140","#4b752a", "#6f8f40", "#375225"))
 
 
-
+ggsave(dm_chart, file="Analysis/Graphs_Tables/dm_graph.png")
 
 
 
