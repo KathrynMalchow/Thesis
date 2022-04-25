@@ -1,13 +1,13 @@
 #Collocation
 
-pacman::p_load(udpipe, quanteda)
+pacman::p_load(udpipe, quanteda, knitr, xtable)
 
 
 ####for DM
-df_coll = collocation(dm_parsed, term = "lemma", group = c("doc_id", "sentence_id"), 
+dm_coll = collocation(dm_parsed, term = "lemma", group = c("doc_id", "sentence_id"), 
           ngram_max = 2, n_min = 3, sep = " ")
 #look by top occurring collocations
-df_coll = df_coll[order(df_coll$freq, decreasing = TRUE),] %>% 
+dm_coll = df_coll[order(df_coll$freq, decreasing = TRUE),] %>% 
   head(10)
 
 
@@ -32,4 +32,16 @@ at_coll = collocation(at_parsed, term = "lemma", group = c("doc_id", "sentence_i
                       ngram_max = 5, n_min = 2, sep = " ")
 #look by top occurring collocations
 at_coll = at_coll[order(at_coll$freq, decreasing = TRUE),]
+
+
+
+
+
+######## make tables ##########
+
+test = kable(head(dm_coll)[1,5], format = "latex", booktabs = TRUE)
+
+
+
+
 

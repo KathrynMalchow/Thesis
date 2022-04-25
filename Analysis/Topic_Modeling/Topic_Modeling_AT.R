@@ -163,6 +163,9 @@ at_chart = topics_at %>%
   scale_fill_manual(values = c("#99c140","#4b752a", "#6f8f40", "#375225"))
 
 
+
+
+
 ggsave(at_chart, file="Analysis/Graphs_Tables/at_graph.png")
 
 
