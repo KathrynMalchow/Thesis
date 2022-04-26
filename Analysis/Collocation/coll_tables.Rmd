@@ -1,0 +1,45 @@
+---
+title: "coll_tables"
+output: html_document
+---
+```{r results="asis"}
+
+cat("
+<style>
+caption {
+      color: red;
+      font-weight: bold;
+      font-size: 1.0em;
+    }
+</style>
+")
+```
+
+
+```{r, out.width="49%", out.height="20%", fig.show='hold',fig.align='center'}
+pacman::p_load(kableExtra)
+
+#DM
+dm_coll
+
+dm_tab = kable(dm_coll[1:5], format='html', row.names = FALSE, caption = "Data and Management") %>% 
+  kable_styling(html_font = "Calibri (Light)", full_width = F) %>% 
+  remove_column(c(2, 3, 4)) 
+dm_tab
+
+#MN
+mn_coll
+
+mn_tab = kable(head(mn_coll[1:5], 10), format='html', row.names = FALSE, caption = "Market Place and Social Network") %>% 
+  kable_styling(html_font = "Calibri (Light)", full_width = F) %>% 
+  remove_column(c(2, 3, 4))
+
+#INFEDU
+
+#AT
+
+kable(table)
+formattable(table)
+
+```
+
