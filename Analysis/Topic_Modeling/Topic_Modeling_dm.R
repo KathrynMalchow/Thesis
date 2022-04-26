@@ -202,7 +202,7 @@ formattable(all_topics_dm, align = c("l","c", "r"),  caption = "Data and Managem
 
 
 ############################ stars and all gamma table
-dm_tm_table_final = formattable(all_topics_dm, align = c("l","c", "r"), caption = "Data and Management", full.width = FALSE, list(
+dm_tm_table_final = formattable(all_topics_dm, align = c("l","c", "r"), caption = "Data and Management", list(
   `Topic` = formatter("span",
                       style = x ~ ifelse(x == "topic1" | x == "topic5" | x == "topic7" | x == "topic13", style(font.weight = "bold"), NA),
                       x ~ icontext(ifelse(x == "topic1" | x == "topic5" | x == "topic7" | x == "topic13", "star", ""), x)),

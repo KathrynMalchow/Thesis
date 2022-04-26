@@ -2,11 +2,11 @@
 
 pacman::p_load(quanteda, tidytext, tidyverse, dplyr, ggplot2, 
                tidyr, textmineR, topicmodels, seededlda, ggthemes, remotes,
-               modelsummary, formattable, htmltools, webshot)
+               modelsummary, formattable, htmltools, webshot, simEd)
 
 #Market_Networks_Final
 
-#####
+
 
 ############preprocess cleaning function####################
 
@@ -14,7 +14,7 @@ reviews_into_words = function(x){
   
   x = x[,c(1, 4)]
   
-  mystopwords = tibble(word = c("app", "star", "fix" , "please", "farmers", "farm", "farmer", "bighaat"), lexicon = "me") 
+  mystopwords = tibble(word = c("app", "star", "fix" , "please", "farmers", "farm", "farmer", "bighaat", "kisan"), lexicon = "me") 
   allstopwords = stop_words %>%
     bind_rows(mystopwords)
   
@@ -39,7 +39,7 @@ reviews_into_words = function(x){
 ##########################################################
 
 
-#run reviews_into_words function for infoed
+#run reviews_into_words function for mn
 mn_char = reviews_into_words(Market_Networks_Final)
 
 #tokenize
@@ -54,15 +54,13 @@ mn_tokens = tokens(mn_char,
 mn_dfm = dfm(mn_tokens)
 
 #run lda
-mn_lda = textmodel_lda(mn_dfm, k = 8)
+mn_lda = textmodel_lda(mn_dfm, k = 5)
 
 terms(mn_lda, 10)
 
 #most important topic for each review
 mn_dfm$topic = topics(mn_lda)
 
-
-############## make table and graph - 1st idea ##########
 
 #get top 10 most important terms for each topic 
 ten_terms_mn = terms(mn_lda, 10)
@@ -74,11 +72,9 @@ ten_names_mn = apply(ten_terms_mn, 2, paste, collapse=", ")
 ten_topic_names_mn = bind_rows(ten_names_mn) %>%
   gather(topic, names)
 
-#rename
-colnames(ten_topic_names_mn)[colnames(ten_topic_names_mn) == 'names'] = 'Terms'
-colnames(ten_topic_names_mn)[colnames(ten_topic_names_mn) == 'topic'] = 'Topic'
 
-#table
+
+###################
 formattable(ten_topic_names_mn, align = c("l","r"), list(
   `Topic` = formatter("span",
                       style = x ~ ifelse(x == "topic1" | x == "topic2" | x == "topic3" | x == "topic4", style(font.weight = "bold"), NA))))
@@ -93,10 +89,10 @@ mn_tm_table_nostar = formattable(ten_topic_names_mn, align = c("l","r"), list(
                                          | x == "market, awesome, prices, markets, cattle, local, helps, grain, time, close" | 
                                            x == "easy, love, user, friendly, lot, add, language, hindi, crashing, team", style(font.weight = "bold"), NA)
   )))
+ #1st table idea, not using
+###################
 
-
-
-
+################
 #export table function
 export_formattable = function(f, file, width = "100%", height = NULL, 
                               background = "white", delay = 0.2)
@@ -113,12 +109,13 @@ export_formattable = function(f, file, width = "100%", height = NULL,
 webshot::install_phantomjs()
 
 export_formattable(mn_tm_table_nostar, "C:/Users/Kathryn/Desktop/Master_Thesis/Thesis_Analysis/Analysis/Graphs_Tables/mn_table.png")
+ #export table function, not using
+###############
 
-
-### making a graph
+#######################
 
 #most important terms for each topic
-top_terms_mn = terms(mn_lda, 4)
+top_terms_mn = terms(mn_lda, 10)
 topic_names_mn = apply(top_terms_mn, 2, paste, collapse=", ")
 
 #extract prevalence of topics across all documents
@@ -132,8 +129,11 @@ topics_mn = as_tibble(mn_lda$theta) %>%
   summarise(gamma = mean(gamma)) %>%
   arrange(desc(gamma)) %>%
   left_join(topic_names_df_mn, by = "topic")
+ #graph, not using
+#########################
 
 
+#######################
 #for theme
 #remotes::install_github("hrbrmstr/hrbrthemes")
 #library(hrbrthemes)
@@ -141,7 +141,6 @@ topics_mn = as_tibble(mn_lda$theta) %>%
 #color palette
 #farm_colors = c("#a47c48", "#99c140", "#ffce36", "#ee4035", "#fff2cc")
 #green colors = c("#99c140","#4b752a", "#6f8f40", "#375225")
-
 
 #plot
 mn_chart = topics_mn %>%
@@ -163,6 +162,34 @@ mn_chart = topics_mn %>%
   scale_fill_manual(values = c("#99c140","#4b752a", "#6f8f40", "#375225"))
 
 
-ggsave(mn_chart, file="Analysis/Graphs_Tables/mn_graph.png")
+ggsave(mn_chart, file="Analysis/Graphs_Tables/mn_graph.png") #graph, not using #graph, not using
+########################
+
+############################ stars and all gamma table
+
+#make into tibble with prevalence (gamma)
+all_topics_mn = as_tibble(mn_lda$theta) %>%
+  mutate(document = rownames(.)) %>%
+  gather(topic, gamma, -document) %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(ten_topic_names_mn, by = "topic")
+
+#rename
+colnames(all_topics_mn)[colnames(all_topics_mn) == 'names'] = 'Terms'
+colnames(all_topics_mn)[colnames(all_topics_mn) == 'topic'] = 'Topic'
+
+
+mn_tm_table_final = formattable(all_topics_mn, align = c("l","c", "r"), caption = "Market Place and Social Network", list(
+  `Topic` = formatter("span",
+                      style = x ~ ifelse(x == "topic3" | x == "topic4" | x == "topic5", style(font.weight = "bold"), NA),
+                      x ~ icontext(ifelse(x == "topic3" | x == "topic4" | x == "topic5", "star", ""), x)),
+  `Terms` = formatter("span",
+                      style = x ~ ifelse(x == "products, product, time, service, experience, team, quality, delivery, services, customer" 
+                                         | x == "update, search, equipment, time, load, location, error, version, list, lot" 
+                                         | x == "information, application, agriculture, excellent, farming, informative, agri, students, helpful, knowledge",
+                                         style(font.weight = "bold"), NA)
+  )))
 
 
