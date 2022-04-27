@@ -14,7 +14,8 @@ reviews_into_words = function(x){
   
   x = x[,c(1, 4)]
   
-  mystopwords = tibble(word = c("app", "star", "fix" , "please"), lexicon = "me") 
+  mystopwords = tibble(word = c("app", "star", "stars", "fix" , "please", "game", "kisan", 
+                                "bharat", "farmers", "farmer", "indian", "agriculture", "farming"), lexicon = "me") 
   allstopwords = stop_words %>%
     bind_rows(mystopwords)
   
@@ -54,15 +55,12 @@ ie_tokens = tokens(infoed_char,
 infoed_dfm = dfm(ie_tokens)
 
 #run lda
-ie_lda = textmodel_lda(infoed_dfm, k = 25)
+ie_lda = textmodel_lda(infoed_dfm, k = 16)
 
 terms(ie_lda, 10)
 
 #most important topic for each review
 infoed_dfm$topic = topics(ie_lda)
-
-
-############## make table and graph - 1st idea ##########
 
 #get top 10 most important terms for each topic 
 ten_terms_ie = terms(ie_lda, 10)
@@ -74,9 +72,42 @@ ten_names_ie = apply(ten_terms_ie, 2, paste, collapse=", ")
 ten_topic_names_ie = bind_rows(ten_names_ie) %>%
   gather(topic, names)
 
+
+#make into tibble with prevalence (gamma)
+all_topics_ie = as_tibble(ie_lda$theta) %>%
+  mutate(document = rownames(.)) %>%
+  gather(topic, gamma, -document) %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(ten_topic_names_ie, by = "topic")
+
 #rename
-colnames(ten_topic_names_ie)[colnames(ten_topic_names_ie) == 'names'] = 'Terms'
-colnames(ten_topic_names_ie)[colnames(ten_topic_names_ie) == 'topic'] = 'Topic'
+colnames(all_topics_ie)[colnames(all_topics_ie) == 'names'] = 'Terms'
+colnames(all_topics_ie)[colnames(all_topics_ie) == 'topic'] = 'Topic'
+
+#save
+write_csv(all_topics_ie, 'Analysis/Topic_Modeling/all_topics_ie.csv')
+write_rds(all_topics_ie, 'Analysis/Topic_Modeling/all_topics_ie.rds')
+
+#remove row 13 (topic6) due to translation error
+all_topics_ie = slice(all_topics_ie, -c(13))
+
+ie_tm_table_final = formattable(all_topics_ie, align = c("l","c", "r"), caption = "Information and Education", list(
+  `Topic` = formatter("span",
+                      style = x ~ ifelse(x == "topic4" | x == "topic5" | x == "topic16", style(font.weight = "bold"), NA),
+                      x ~ icontext(ifelse(x == "topic4" | x == "topic5" | x == "topic16", "star", ""), x)),
+  `Terms` = formatter("span",
+                      style = x ~ ifelse(x == "crop, service, weather, advisory, india, smart, accurate, knowledge, prediction, purchases" 
+                                         | x == "application, nice, easy, data, language, superb, english, hindi, malayalam, gujarati" 
+                                         | x == "knowledge, experience, agrimedia, found, features, weeds, identify, product, wonderful, quickly",
+                                         style(font.weight = "bold"), NA))))
+
+
+
+
+############## make table and graph - 1st idea ##########
+
 
 #table
 ie_tm_table = formattable(ten_topic_names_ie, align = c("l","r"), list(
