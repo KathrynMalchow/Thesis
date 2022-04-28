@@ -42,19 +42,23 @@ reviews_into_words = function(x){
 #run reviews_into_words function for infoed
 at_char = reviews_into_words(Advanced_Tech_Final)
 
+
 #tokenize
-at_tokens = tokens(at_char,
+at_tokens = tokens(at_char, 
                    remove_punct = TRUE,
                    remove_numbers = TRUE) %>%
   tokens_remove(stopwords()) %>%
   tokens_tolower() %>% 
-  tokens_select(min_nchar = 1)  
+  tokens_select(min_nchar = 1)
+
 
 #create Document Feature Matrix
 at_dfm = dfm(at_tokens)
 
+
+
 #run lda
-at_lda = textmodel_lda(at_dfm, k = 7)
+at_lda = textmodel_lda(at_dfm, k = 10)
 
 terms(at_lda, 10)
 
@@ -74,11 +78,39 @@ ten_names_at = apply(ten_terms_at, 2, paste, collapse=", ")
 ten_topic_names_at = bind_rows(ten_names_at) %>%
   gather(topic, names)
 
+
+#make into tibble with prevalence (gamma)
+all_topics_at = as_tibble(at_lda$theta) %>%
+  mutate(document = rownames(.)) %>%
+  gather(topic, gamma, -document) %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(ten_topic_names_at, by = "topic")
+
 #rename
-colnames(ten_topic_names_at)[colnames(ten_topic_names_at) == 'names'] = 'Terms'
-colnames(ten_topic_names_at)[colnames(ten_topic_names_at) == 'topic'] = 'Topic'
+colnames(all_topics_at)[colnames(all_topics_at) == 'names'] = 'Terms'
+colnames(all_topics_at)[colnames(all_topics_at) == 'topic'] = 'Topic'
+
+#save
+write_csv(all_topics_at, 'Analysis/Topic_Modeling/all_topics_at.csv')
+write_rds(all_topics_at, 'Analysis/Topic_Modeling/all_topics_at.rds')
 
 #table
+at_tm_table_final = formattable(all_topics_at, align = c("l","c", "r"), caption = "Advanced Technologies", list(
+  `Topic` = formatter("span",
+                      style = x ~ ifelse(x == "topic1" | x == "topic2" | x == "topic9", style(font.weight = "bold"), NA),
+                      x ~ icontext(ifelse(x == "topic1" | x == "topic2" | x == "topic9", "star", ""), x)),
+  `Terms` = formatter("span",
+                      style = x ~ ifelse(x == "field, fields, track, data, save, maps, love, recommend, waste, note" 
+                                         | x == "gps, phone, accurate, accuracy, free, love, map, garmin, close, external" 
+                                         | x == "plant, plants, diseases, photo, disease, nice, identify, picture, time, application",
+                                         style(font.weight = "bold"), NA))))
+
+
+
+
+##########################
 formattable(ten_topic_names_at, align = c("l","r"), list(
   `Topic` = formatter("span",
                       style = x ~ ifelse(x == "topic3" | x == "topic5" | x == "topic6" | x == "topic7", style(font.weight = "bold"), NA))))
