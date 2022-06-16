@@ -1,4 +1,4 @@
-# Can Precision Farming be Implemented Through an App? - <br /> Evaluating Farmer Reviews of Agricultural Mobile Applications 
+# Can Precision Farming be Implemented Through an App? <br /> Evaluating Farmer Reviews of Agricultural Mobile Applications 
 
 #### by Kathryn Malchow
 
