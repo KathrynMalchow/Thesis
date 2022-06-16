@@ -1,6 +1,6 @@
 # Can Precision Farming be Implemented Through an App? <br /> Evaluating Farmer Reviews of Agricultural Mobile Applications 
 
-#### by Kathryn Malchow
+#### Master's Thesis by Kathryn Malchow
 
 ### Project Summary
 Sustainable food systems are urgently needed that can feed growing populations without accelerating environmental degradation. Precision farming (PF) is an agricultural method that utilizes real-time data and information technology to increase crop yields while reducing inputs such as water, fertilizer, and pesticides. Governments across the globe are promoting the development of PF mobile applications to efficiently bring PF techniques straight into farmers’ hands. Some PF apps exist already, but there is a lack of research about their success with agricultural production or with farmers themselves. 
