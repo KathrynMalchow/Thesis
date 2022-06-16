@@ -7,3 +7,4 @@ Sustainable food systems are urgently needed that can feed growing populations w
 <br />
 Textual analysis was conducted on the reviews  of 40 agricultural apps collected from Google Play’s website. Most selected apps were suitable internationally, but some focused on Indian agriculture. Popular topics and features (2-word collocations) were extracted and analyzed through both sentimental analysis and manual reading. The results show that a farmers’ satisfaction with an app depends largely on cost, the user interface, and how useful the technology is.  
 
+View or download full thesis PDF [here](https://github.com/KathrynMalchow/Thesis_Analysis/blob/main/malchow_kathryn_master_thesis.pdf).
